@@ -1,0 +1,15 @@
+{
+	"name": "infrajs/lang",
+	"homepage":"https://github.com/infrajs/lang",
+	"description":"Поддержка мультиязычности",
+	"license": "GPL3",
+	"autoload": {
+		"psr-4": { "infrajs\\lang\\": "/" }
+	},
+	"require":{
+		"template":"~1",
+		"event":"~1",
+		"env":"~1",
+		"config":"~1"
+	}
+}
