@@ -7,9 +7,9 @@
 		"psr-4": { "infrajs\\lang\\": "/" }
 	},
 	"require":{
-		"template":"~1",
-		"event":"~1",
-		"env":"~1",
-		"config":"~1"
+		"infrajs/template":"~1",
+		"infrajs/event":"~1",
+		"infrajs/env":"~1",
+		"infrajs/config":"~1"
 	}
 }
