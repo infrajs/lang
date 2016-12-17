@@ -1,4 +1,19 @@
 window.Lang = {
+	str: function (name, str) {
+		if (!name) {
+			var src = '-index/i18n/';
+			var name = 'lang';
+		} else {
+			var src = '-'+name+'/i18n/';
+		}
+
+		var lang = Lang.name(name);
+		if (!str) return lang;
+				
+		var langs = Load.loadJSON(src+lang+'.json');
+		if (langs && langs[str]) return langs[str];
+		else return str;
+	},
 	name: function (ext) {
 		//Определяем текущий язык сайта или расширения ext (ext.def ext.list)
 		var sel = Env.get('lang');

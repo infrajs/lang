@@ -27,10 +27,11 @@ Env::add('lang', function () {
 
 
 Event::one('Controller.oninit', function () {
-	Template::$scope['~lang'] = function ($name = false, $str = null) {
+	Template::$scope['Lang'] = array();
+	Template::$scope['Lang']['str'] = function ($name = false, $str = null) {
 		return Lang::str($name, $str);
 	};
-	Template::$scope['Lang.str'] = function ($name = false, $str = null) {
-		return Lang::str($name, $str);
+	Template::$scope['Lang']['name'] = function ($name = false) {
+		return Lang::name($name);
 	};
 });
