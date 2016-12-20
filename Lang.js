@@ -1,18 +1,15 @@
 window.Lang = {
-	str: function (name, str) {
-		if (!name) {
-			var src = '-index/i18n/';
-			var name = 'lang';
-		} else {
-			var src = '-'+name+'/i18n/';
-		}
-
-		var lang = Lang.name(name);
-		if (!str) return lang;
-				
+	lang: function (lang, name, str) {
+		var src = '-'+name+'/i18n/';
 		var langs = Load.loadJSON(src+lang+'.json');
 		if (langs && langs[str]) return langs[str];
 		else return str;
+	},
+	str: function (name, str) {
+		if (!name) name = 'lang';
+		var lang = Lang.name(name);
+		if (!str) return lang;
+		return Lang.lang(lang, name, str);
 	},
 	name: function (ext) {
 		//Определяем текущий язык сайта или расширения ext (ext.def ext.list)
