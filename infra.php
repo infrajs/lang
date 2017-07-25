@@ -9,11 +9,15 @@ use infrajs\template\Template;
 
 Env::add('lang', function () {
 	$conf = Config::get('lang');
+	
 	if (!isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) $accept = 'ru';
 	else  $accept = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
 	
 	preg_match('/^\w{2}/',$accept, $matches);
-	switch (strtolower($matches[0])){
+	if (isset($matches[0])) $accept = $matches[0];
+	else $accept = 'ru';
+	
+	switch (strtolower($accept)){
 	    case "ru": $lang = "ru"; break; // если русский
 	    case "de": $lang = "de"; break; // если немецкий
 	    case "fr": $lang = "fr"; break; // если французкий
