@@ -2,7 +2,6 @@
 	"name": "infrajs/lang",
 	"homepage":"https://github.com/infrajs/lang",
 	"description":"Поддержка мультиязычности",
-	"license": "GPL3",
 	"autoload": {
 		"psr-4": { "infrajs\\lang\\": "/" }
 	},
