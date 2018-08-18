@@ -5,9 +5,9 @@ window.Lang = {
 		if (langs && langs[str]) return langs[str];
 		else return str;
 	},
-	str: function (name, str) {
+	str: function (name, str, lang) {
 		if (!name) name = 'lang';
-		var lang = Lang.name(name);
+		lang = lang || Lang.name(name);
 		if (!str) return lang;
 		return Lang.lang(lang, name, str);
 	},
