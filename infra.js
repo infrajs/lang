@@ -1,10 +1,5 @@
-import { Event } from '/vendor/infrajs/event/Event.js'
-Event.one('Controller.oninit', function () {
-	Template.scope['Lang'] = {};
-	Template.scope['Lang']['str'] = function (name, str) {
-		return Lang.str(name, str);
-	};
-	Template.scope['Lang']['name'] = function (name) {
-		return Lang.name(name);
-	};
-});
+import { Controller } from '/vendor/infrajs/controller/src/Controller.js'
+
+Controller.hand('init', async () => {
+	await import('./init.js')
+})

@@ -1,4 +1,4 @@
-window.Lang = {
+let Lang = {
 	lang: function (lang, name, str) {
 		var src = '-'+name+'/i18n/';
 		var langs = Load.loadJSON(src+lang+'.json');
@@ -26,3 +26,6 @@ window.Lang = {
 		return sel;
 	}
 }
+
+window.Lang = Lang
+export {Lang}

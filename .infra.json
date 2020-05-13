@@ -1,7 +1,7 @@
 {
 	"pub":["lang"],
 	"require":"infra.php",
-	"js":["Lang.js","infra.js"],
+	"js":["infra.js"],
 	"lang":{
 		"def":"ru",
 		"list":["ru","en","de","fr","ua"]
