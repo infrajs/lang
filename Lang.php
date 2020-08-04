@@ -10,9 +10,14 @@ class Lang
 	public static function lang($lang, $name, $str)
 	{
 		$src = '-'.$name.'/i18n/';
+		
 		$langs = Load::loadJSON($src.$lang.'.json');
 		if (!empty($langs[$str])) return $langs[$str];
-		else return $str;
+		
+		$langs = Load::loadJSON($src.$lang.'.server.json');
+		if (!empty($langs[$str])) return $langs[$str];
+
+		return $str;
 	}
 	public static function str($name, $str)
 	{

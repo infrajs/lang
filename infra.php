@@ -9,7 +9,7 @@ use infrajs\template\Template;
 
 Env::add('lang', function () {
 	$conf = Config::get('lang');
-	
+
 	if (!isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) $accept = 'ru';
 	else  $accept = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
 	
