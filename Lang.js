@@ -1,5 +1,13 @@
+
 let Lang = {
-	lang: function (lang, name, str) {
+	fn: name => {
+		return str => {
+			let lang = Lang.name(name)
+			if (!str) return lang
+			return Lang.lang(lang, name, str)
+		}
+	},
+	lang: (lang, name, str) => {
 		var src = '-'+name+'/i18n/';
 		var langs = Load.loadJSON(src+lang+'.json');
 		if (langs && langs[str]) return langs[str];
