@@ -1,0 +1,11 @@
+{
+    "403":"Forbidden",
+    "400":"Bad Request",
+    "401":"Unauthorized",
+    "404":"Not Found",
+    "500":"Internal Server Error",
+    "debug":"Debug mode required",
+    "meta":"Error in the meta file",
+    "post":"POST expected",
+    "db":"Database error"
+}
