@@ -23,13 +23,24 @@ trait LangAns
         $code = static::$name.'.'.$code;
         return Lang::err($ans, $lang, $code);
     }
+    public static function errtpl($ans, $lang = null, $code = null)
+    {
+        if (is_null($code)) return Ans::err($ans);
+        $code = static::$name.'.'.$code;
+        return Lang::errtpl($ans, $lang, $code);
+    }
     //С кодом ошибки в сообщении
     public static function fail($ans, $lang = null, $code = null)
     {
         if (is_null($code)) return Ans::err($ans);
-        
         $code = static::$name.'.'.$code;
         return Lang::fail($ans, $lang, $code);
+    }
+    public static function failtpl($ans, $lang = null, $code = null)
+    {
+        if (is_null($code)) return Ans::err($ans);
+        $code = static::$name.'.'.$code;
+        return Lang::failtpl($ans, $lang, $code);
     }
     //Без кода ошибки в сообщении
     public static function ret($ans, $lang = null, $code = null)
@@ -37,5 +48,11 @@ trait LangAns
         if (is_null($code)) return Ans::ret($ans);
         $code = static::$name.'.'.$code;
         return Lang::ret($ans, $lang, $code);
+    }
+    public static function rettpl($ans, $lang = null, $code = null)
+    {
+        if (is_null($code)) return Ans::ret($ans);
+        $code = static::$name.'.'.$code;
+        return Lang::rettpl($ans, $lang, $code);
     }
 }

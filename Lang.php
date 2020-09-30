@@ -6,6 +6,7 @@ use infrajs\env\Env;
 use infrajs\config\Config;
 use infrajs\load\Load;
 use infrajs\ans\Ans;
+use infrajs\template\Template;
 use infrajs\cache\CacheOnce;
 
 class Lang
@@ -60,7 +61,7 @@ class Lang
 		if (!in_array($lang, $conf['lang']['list'])) $lang = $conf['lang']['def'];
 		return $lang;
 	}
-	public static function code($lang, &$code)
+	public static function code($lang, &$code, $ans = false)
 	{
 		$r = explode('.', $code);
 		if (sizeof($r) == 4) {
@@ -87,51 +88,73 @@ class Lang
 			}
 			$kod = $r[1];
 		}
-		return Lang::lang($lang, $name, $kod);
+		return Lang::lang($lang, $name, $kod, $ans);
 	}
 	//Без кода ошибки в сообщении
 	public static function err($ans, $lang = null, $code = null)
 	{
 		if (is_null($code)) return Ans::err($ans);
-
-		$msg = static::code($lang, $code);
-
 		$ans['code'] = $code;
+		$msg = static::code($lang, $code);
+		return Ans::err($ans, $msg);
+	}
+	public static function errtpl($ans, $lang = null, $code = null)
+	{
+		if (is_null($code)) return Ans::err($ans);
+		$ans['code'] = $code;
+		$msg = static::code($lang, $code, $ans);
 		return Ans::err($ans, $msg);
 	}
 	//С кодом ошибки в сообщении
 	public static function fail($ans, $lang = null, $code = null)
 	{
 		if (is_null($code)) return Ans::err($ans);
-
+		$ans['code'] = $code;
 		$msg = static::code($lang, $code);
-
 		if (!in_array($msg[strlen($msg) - 1], ['.', '!', '?'])) $msg .= '.';
 		$msg .= ' <code>' . $code . '</code>';
-
+		return Ans::err($ans, $msg);
+	}
+	public static function failtpl($ans, $lang = null, $code = null)
+	{
+		if (is_null($code)) return Ans::err($ans);
 		$ans['code'] = $code;
+		$msg = static::code($lang, $code, $ans);
+		if (!in_array($msg[strlen($msg) - 1], ['.', '!', '?'])) $msg .= '.';
+		$msg .= ' <code>' . $code . '</code>';
 		return Ans::err($ans, $msg);
 	}
 	//Без кода ошибки в сообщении
 	public static function ret($ans, $lang = null, $code = null)
 	{
 		if (is_null($code)) return Ans::ret($ans);
-		$msg = static::code($lang, $code);
 		$ans['code'] = $code;
+		$msg = static::code($lang, $code);
+		return Ans::ret($ans, $msg);
+	}
+	public static function rettpl($ans, $lang = null, $code = null)
+	{
+		if (is_null($code)) return Ans::ret($ans);
+		$ans['code'] = $code;
+		$msg = static::code($lang, $code, $ans);
 		return Ans::ret($ans, $msg);
 	}
 
 
 
-	public static function lang($lang, $name, $str)
+	public static function lang($lang, $name, $str, $data = false)
 	{
 		$src = '-' . $name . '/i18n/';
 
 		$langs = Load::loadJSON($src . $lang . '.json');
-		if (!empty($langs[$str])) return $langs[$str];
+		if (!empty($langs[$str])) {
+			return $data ? Template::parse([$langs[$str]], $data) : $langs[$str];
+		}
 
 		$langs = Load::loadJSON($src . $lang . '.server.json');
-		if (!empty($langs[$str])) return $langs[$str];
+		if (!empty($langs[$str])) {
+			return $data ? Template::parse([$langs[$str]], $data) : $langs[$str];
+		}
 
 		return $str;
 	}
