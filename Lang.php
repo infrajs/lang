@@ -5,6 +5,7 @@ namespace infrajs\lang;
 use infrajs\env\Env;
 use infrajs\config\Config;
 use infrajs\load\Load;
+use infrajs\path\Path;
 use infrajs\ans\Ans;
 use infrajs\template\Template;
 use infrajs\cache\CacheOnce;
@@ -88,6 +89,8 @@ class Lang
 			}
 			$kod = $r[1];
 		}
+
+		
 		return Lang::lang($lang, $name, $kod, $ans);
 	}
 	//Без кода ошибки в сообщении
@@ -146,14 +149,18 @@ class Lang
 	{
 		$src = '-' . $name . '/i18n/';
 
-		$langs = Load::loadJSON($src . $lang . '.json');
-		if (!empty($langs[$str])) {
-			return $data ? Template::parse([$langs[$str]], $data) : $langs[$str];
+		if (Path::theme($src . $lang . '.json')) {
+			$langs = Load::loadJSON($src . $lang . '.json');
+			if (!empty($langs[$str])) {
+				return $data ? Template::parse([$langs[$str]], $data) : $langs[$str];
+			}
 		}
 
-		$langs = Load::loadJSON($src . $lang . '.server.json');
-		if (!empty($langs[$str])) {
-			return $data ? Template::parse([$langs[$str]], $data) : $langs[$str];
+		if (Path::theme($src . $lang . '.server.json')) {
+			$langs = Load::loadJSON($src . $lang . '.server.json');
+			if (!empty($langs[$str])) {
+				return $data ? Template::parse([$langs[$str]], $data) : $langs[$str];
+			}
 		}
 
 		return $str;
