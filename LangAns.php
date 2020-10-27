@@ -7,10 +7,37 @@ use infrajs\ans\Ans;
 trait LangAns
 {
     //public static $name = '...';
-    public static function code($lang, $code)
+    public static function code($lang, $code, $data = false)
     {
-        $code = static::$name.'.'.$code;
-        return Lang::code($lang, $code);
+        return Lang::code($lang, static::$name.'.'.$code, $data);
+        // if (empty(static::$name)) throw new Exception('Требуется static:$name');
+
+        // //dic.key#more
+        // //key#more
+        
+        // $from = static::$name;
+        // $r = explode('.', $code, 2);
+
+        // if (sizeof($r) == 2) {
+        //     $dic = $r[0];
+        //     $key = $r[1];
+            
+        // } else {
+        //     $dic = $from;
+        //     $key = $code;
+        // }
+        // $s = explode('#', $key);
+        // $key = $s[0];
+        // $more = $s[1] ?? false;
+        // if (!$more && preg_match("/\d/", $key)) { //depricated
+        //     $more = $key;
+        //     $key = $dic;
+        //     $dic = $from;
+        // }
+
+        
+        
+        // return Lang::lang($lang, $dic, $key, $data);
     }
     public static function lang($lang, $str)
     {

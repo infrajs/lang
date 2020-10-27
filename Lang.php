@@ -28,95 +28,110 @@ class Lang
 	}
 	public static function detect()
 	{
-		$conf = Config::get('lang');
+		return static::once('detect', [], function () {
+			$conf = Config::get('lang');
 
-		if (!isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) $accept = 'ru';
-		else  $accept = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+			if (!isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) $accept = 'ru';
+			else  $accept = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
 
-		preg_match('/^\w{2}/', $accept, $matches);
-		if (isset($matches[0])) $accept = $matches[0];
-		else $accept = 'ru';
+			preg_match('/^\w{2}/', $accept, $matches);
+			if (isset($matches[0])) $accept = $matches[0];
+			else $accept = 'ru';
 
-		switch (strtolower($accept)) {
-			case "ru":
-				$lang = "ru";
-				break; // если русский
-			case "de":
-				$lang = "de";
-				break; // если немецкий
-			case "fr":
-				$lang = "fr";
-				break; // если французкий
-			case "en":
-			case "uk":
-			case "us":
-				$lang = "en";
-				break; // если английский
-			case "ua":
-				$lang = "ua";
-				break; // если украинский
-			default:
-				$lang = $conf['lang']['def'];
-				break;
-		}
-		if (!in_array($lang, $conf['lang']['list'])) $lang = $conf['lang']['def'];
-		return $lang;
+			switch (strtolower($accept)) {
+				case "ru":
+					$lang = "ru";
+					break; // если русский
+				case "de":
+					$lang = "de";
+					break; // если немецкий
+				case "fr":
+					$lang = "fr";
+					break; // если французкий
+				case "en":
+				case "uk":
+				case "us":
+					$lang = "en";
+					break; // если английский
+				case "ua":
+					$lang = "ua";
+					break; // если украинский
+				default:
+					$lang = $conf['lang']['def'];
+					break;
+			}
+			if (!in_array($lang, $conf['lang']['list'])) $lang = $conf['lang']['def'];
+			return $lang;
+		});
 	}
-	public static function code($lang, &$code, $ans = false)
+	public static function code($lang, $code, $data = false)
 	{
+		//from.dic.key#more
+		//dic.key#more exception
+		//key#more
+		
 		$r = explode('.', $code, 3);
-		if (sizeof($r) == 4) {
-			$ext = $r[0];
-			$name = $r[1];
-			$kod = $r[2];
-		} else if (sizeof($r) == 3) {
-			$name = $r[0];
-			if (isset(static::$name)) {
-				$ext = $name;
-			} else {
-				$ext = Lang::detectExt();
-				if ($name != $ext) $code = $ext . '.' . $code;
-			}
-			$kod = $r[1];
-			// $ext = $r[0]; //Где произошло событие
-			// $name = $r[1]; //Из какого словаря берётся сообщение
-			// $kod = $r[2]; //Код ошибки
-			// $kod = $ext.'.'.$kod;
-			// if (isset(static::$name)) {
-			// 	$ext = $name;
-			// } else {
-			// 	$ext = Lang::detectExt();
-			// 	if ($name != $ext) $code = $ext . '.' . $code;
-			// }
-			// $kod = $r[1];
-		} else if (sizeof($r) == 2) {
+		if (sizeof($r) == 3) {
+			//from.dic.key#more
+			//from.dic.key.more
+			//dic.key.more
+			$dic = $r[1];
+			$from = $r[0];
+			$key = $r[2];
 			
-			$name = $r[0];
-
-			if (isset(static::$name)) {
-				$ext = $name;
-			} else {
-				$ext = Lang::detectExt();
-				if ($name != $ext) $code = $ext . '.' . $code;
-			}
-			$kod = $r[1];
+		} else if (sizeof($r) == 2) {
+			//key.more
+			//dic.key
+			$dic = $r[0];
+			$from = $r[0];
+			$key = $r[1];
+		} else {
+			echo '<pre>';
+			throw new \Exception('Ошибка '.$code);
 		}
 		
-		return Lang::lang($lang, $name, $kod, $ans);
+		$s = explode('#', $key);
+		$key = $s[0];
+		$more = $s[1] ?? false;
+		if (!$more && preg_match("/\d/", $key)) { //depricated
+			$more = $key;
+			$key = $dic;
+			$dic = $from;
+		}
+		return Lang::lang($lang, $dic, $key, $data);
 	}
+	public static function make($opt = []) {
+		//from.dic.key#more
+		//from.dic.key#more
+
+		//dic.key#more
+		//key#more
+		extract(array_merge([
+			'dic'=> Lang::detectExt(),
+			'key' => 'undefined',
+			'payload' => false, //Данные для шаблона сообщения
+			'lang' => Lang::detect()
+		], $opt));
+
+		$str = Lang::lang($lang, $dic, $key, $payload);
+		if ($more) $str = $str ? $str.' '.$more : $more;
+	}
+
+
+	
 	//Без кода ошибки в сообщении
 	public static function err($ans, $lang = null, $code = null)
 	{
 		if (is_null($code)) return Ans::err($ans);
 		$ans['code'] = $code;
-		$msg = static::code($lang, $code);
+		$msg = Lang::code($lang, $code);
 		return Ans::err($ans, $msg);
 	}
 	public static function errtpl($ans, $lang = null, $code = null)
 	{
 		if (is_null($code)) return Ans::err($ans);
 		$ans['code'] = $code;
-		$msg = static::code($lang, $code, $ans);
+		$msg = Lang::code($lang, $code, $ans);
 		return Ans::err($ans, $msg);
 	}
 	//С кодом ошибки в сообщении
@@ -124,7 +139,7 @@ class Lang
 	{
 		if (is_null($code)) return Ans::err($ans);
 		$ans['code'] = $code;
-		$msg = static::code($lang, $code);
+		$msg = Lang::code($lang, $code);
 		if (!in_array($msg[strlen($msg) - 1], ['.', '!', '?'])) $msg .= '.';
 		$msg .= ' <code>' . $code . '</code>';
 		return Ans::err($ans, $msg);
@@ -133,7 +148,7 @@ class Lang
 	{
 		if (is_null($code)) return Ans::err($ans);
 		$ans['code'] = $code;
-		$msg = static::code($lang, $code, $ans);
+		$msg = Lang::code($lang, $code, $ans);
 		if (!in_array($msg[strlen($msg) - 1], ['.', '!', '?'])) $msg .= '.';
 		$msg .= ' <code>' . $code . '</code>';
 		return Ans::err($ans, $msg);
@@ -143,14 +158,14 @@ class Lang
 	{
 		if (is_null($code)) return Ans::ret($ans);
 		$ans['code'] = $code;
-		$msg = static::code($lang, $code);
+		$msg = Lang::code($lang, $code);
 		return Ans::ret($ans, $msg);
 	}
 	public static function rettpl($ans, $lang = null, $code = null)
 	{
 		if (is_null($code)) return Ans::ret($ans);
 		$ans['code'] = $code;
-		$msg = static::code($lang, $code, $ans);
+		$msg = Lang::code($lang, $code, $ans);
 		return Ans::ret($ans, $msg);
 	}
 
