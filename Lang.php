@@ -64,7 +64,7 @@ class Lang
 	}
 	public static function code($lang, &$code, $ans = false)
 	{
-		$r = explode('.', $code);
+		$r = explode('.', $code, 3);
 		if (sizeof($r) == 4) {
 			$ext = $r[0];
 			$name = $r[1];
@@ -78,7 +78,19 @@ class Lang
 				if ($name != $ext) $code = $ext . '.' . $code;
 			}
 			$kod = $r[1];
+			// $ext = $r[0]; //Где произошло событие
+			// $name = $r[1]; //Из какого словаря берётся сообщение
+			// $kod = $r[2]; //Код ошибки
+			// $kod = $ext.'.'.$kod;
+			// if (isset(static::$name)) {
+			// 	$ext = $name;
+			// } else {
+			// 	$ext = Lang::detectExt();
+			// 	if ($name != $ext) $code = $ext . '.' . $code;
+			// }
+			// $kod = $r[1];
 		} else if (sizeof($r) == 2) {
+			
 			$name = $r[0];
 
 			if (isset(static::$name)) {
@@ -89,7 +101,6 @@ class Lang
 			}
 			$kod = $r[1];
 		}
-
 		
 		return Lang::lang($lang, $name, $kod, $ans);
 	}
