@@ -73,8 +73,8 @@ class Lang
 		$r = explode('.', $code, 3);
 		if (sizeof($r) == 3) {
 			//from.dic.key#more
-			//from.dic.key.more
-			//dic.key.more
+			//from.dic.key.more - depricated
+			//dic.key.more - depricated
 			$dic = $r[1];
 			$from = $r[0];
 			$key = $r[2];
@@ -93,10 +93,12 @@ class Lang
 		$s = explode('#', $key);
 		$key = $s[0];
 		$more = $s[1] ?? false;
-		if (!$more && preg_match("/\d/", $key)) { //depricated
-			$more = $key;
-			$key = $dic;
-			$dic = $from;
+		if (sizeof($r) > 2) { //depricated
+			if (!$more && preg_match("/\d/", $key)) {
+				$more = $key;
+				$key = $dic;
+				$dic = $from;
+			}
 		}
 		return Lang::lang($lang, $dic, $key, $data);
 	}
