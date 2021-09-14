@@ -1,5 +1,5 @@
-
-let Lang = {
+import { Env } from "/vendor/infrajs/env/Env.js"
+const Lang = {
 	fn: name => {
 		return str => {
 			let lang = Lang.name(name)
